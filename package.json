@@ -1,0 +1,27 @@
+{
+  "name": "node-libuiohook",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/index.mjs",
+  "scripts": {
+    "build:go": "cd ./native/ && ./build.sh",
+    "build:ts": "tsc",
+    "build:ts:watch": "tsc -w --preserveWatchOutput"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ffi-napi": "^4.0.3",
+    "ref-napi": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/ffi-napi": "^4.0.8",
+    "@types/ref-napi": "^3.0.7",
+    "typescript": "^5.2.2"
+  },
+  "volta": {
+    "node": "18.18.0"
+  }
+}
