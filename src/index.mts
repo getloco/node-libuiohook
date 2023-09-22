@@ -1,38 +1,31 @@
-import ffi from "ffi-napi";
-import ref from "ref-napi";
+import koffi from "koffi";
 
-let i = 0;
+const lib = koffi.load("./native-artifacts/node-libuiohook-linux-amd64.so");
 
-const callbackFunc = ffi.Callback(
-  "void",
-  [
-    "uint8", // kind
-    "int64", // when
-    "uint16", // mask
-    "uint16", // reserved
-    "uint16", // key_code
-    "uint16", // raw_code
-    "int32", // key_char
-    "uint16", // button
-    "uint16", // clicks
-    "int16", // x
-    "int16", // y
-    "uint16", // amount
-    "int32", // rotation
-    "uint8", // direction
-  ],
-  function (...args) {
-    console.log(i++, args);
-  }
+const listener = koffi.proto(`
+  void listener(
+    uint8_t kind,
+    int64_t when,
+    uint16_t mask,
+    uint16_t reserved,
+    uint16_t key_code,
+    uint16_t raw_code,
+    int32_t key_char,
+    uint16_t button,
+    uint16_t clicks,
+    int16_t x,
+    int16_t y,
+    uint16_t amount,
+    int32_t rotaion,
+    uint8_t direction
+  )
+`);
+
+const Join = lib.func("Join", "void", [koffi.pointer(listener)]);
+
+Join.async(
+  (...args: any[]) => {
+    console.log(args);
+  },
+  () => {}
 );
-
-const lib = ffi.Library("./native-artifacts/node-libuiohook-linux-amd64.so", {
-  Join: ["void", ["pointer"]],
-  Kill: ["void", []],
-});
-
-lib.Join.async(callbackFunc, () => {});
-
-setInterval(() => {
-  // console.log("huehue");
-}, 5_000);
