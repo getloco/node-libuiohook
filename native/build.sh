@@ -89,7 +89,7 @@ env \
     CGO_ENABLED=1 \
     CC=i686-w64-mingw32-gcc \
     go build \
-        -o ../native-artifacts/node-libuiohook-windows-i386.so \
+        -o ../native-artifacts/node-libuiohook-windows-i386.dll \
         -buildmode=c-shared \
         main.go
 
