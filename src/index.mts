@@ -1,6 +1,6 @@
 import koffi from "koffi";
 
-const lib = koffi.load("./native-artifacts/node-libuiohook-linux-amd64.so");
+const lib = koffi.load("./native-artifacts/node-libuiohook-darwin-arm64.dylib");
 
 const listener = koffi.proto(`
   void listener(

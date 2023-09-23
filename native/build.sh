@@ -3,10 +3,39 @@
 rm -f ../native-artifacts/*.h
 rm -f ../native-artifacts/*.so
 rm -f ../native-artifacts/*.dll
+rm -f ../native-artifacts/*.dylib
 
+# MacOS -- arm64
+echo "MacOS -- arm64"
 
+rm -f callback.o
+clang -arch arm64 -c callback.c
 
+env \
+    GOOS=darwin \
+    GOARCH=arm64 \
+    CGO_ENABLED=1 \
+    go build \
+        -o ../native-artifacts/node-libuiohook-darwin-arm64.dylib \
+        -buildmode=c-shared \
+        main.go
 
+# MacOS -- amd64
+echo "MacOS -- amd64"
+
+rm -f callback.o
+clang -arch x86_64 -c callback.c
+
+env \
+    GOOS=darwin \
+    GOARCH=amd64 \
+    CGO_ENABLED=1 \
+    go build \
+        -o ../native-artifacts/node-libuiohook-darwin-amd64.dylib \
+        -buildmode=c-shared \
+        main.go
+
+exit 0;
 
 
 # Linux -- amd64
