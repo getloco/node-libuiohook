@@ -1,62 +1,65 @@
 package main
 
-/*
-// #cgo windows LDFLAGS: -L. -lcallback
-
-#cgo CFLAGS: -I .
-#cgo LDFLAGS: /home/omran/Projects/omranjamal/node-libuiohook/native/callback.o
-
-#include "callback.h"
-*/
-import "C"
-
 import (
+	"bufio"
+	"fmt"
 	hook "github.com/robotn/gohook"
+	"os"
 )
 
-var stopChan chan struct{} = make(chan struct{})
+// KIND 11 == mouse wheel
+// KIND 10 == mouse drag
+// KIND 9 == mouse move
+// KIND 8 = mouse down
+// KIND 7 = mouse hold
+// KIND 6 = mouse up
+// KIND 5 = key up
+// KIND 4 = key hold
+// KIND 3 = key down
 
-func startListener(fn C.callbackFunc) {
+func start() {
 	evChan := hook.Start()
 	defer hook.End()
 
-	for {
-		select {
-		case ev, ok := <-evChan:
-			if ok {
-				C.callCallback(
-					fn,
-
-					C.uint8_t(ev.Kind),
-					C.int64_t(ev.When.UnixMilli()),
-					C.uint16_t(ev.Mask),
-					C.uint16_t(ev.Reserved),
-					C.uint16_t(ev.Keycode),
-					C.uint16_t(ev.Rawcode),
-					C.int32_t(ev.Keychar),
-					C.uint16_t(ev.Button),
-					C.uint16_t(ev.Clicks),
-					C.int16_t(ev.X),
-					C.int16_t(ev.Y),
-					C.uint16_t(ev.Amount),
-					C.int32_t(ev.Rotation),
-					C.uint8_t(ev.Direction),
-				)
-			}
-		case <-stopChan:
-			return
-		}
+	for ev := range evChan {
+		fmt.Println("", fmt.Sprintf("RE: %x K: %x R: %x C: %x", ev.Reserved, ev.Keycode, ev.Rawcode, ev.Keychar))
 	}
 }
 
-//export Join
-func Join(fn C.callbackFunc) {
-	startListener(fn)
-}
+func main() {
+	go start()
 
-//export Kill
-func Kill() {
-	stopChan <- struct{}{}
-}
+	reader := bufio.NewReader(os.Stdin)
 
-func main() {}
+	for {
+		command, _ := reader.ReadByte()
+
+		if command == 255 { // simple-listen
+			listenFor, _ := reader.ReadByte()
+
+			if listenFor == 0xFF { // key down
+
+			} else if listenFor == 0xFE { // key up
+
+			} else if listenFor == 0xFD { // mouse click
+
+			} else if listenFor == 0xFC { // mouse down
+
+			} else if listenFor == 0xFB { // mouse up
+
+			} else if listenFor == 0xFA { // mouse move
+
+			} else if listenFor == 0xF9 { // mouse drag
+
+			} else if listenFor == 0xF8 { // mouse wheel
+
+			}
+		} else if command == 254 { // unregister simple-listen
+
+		} else if command == 253 { // compound-listen
+
+		} else if command == 252 { // unregister compound-listen
+
+		}
+	}
+}
